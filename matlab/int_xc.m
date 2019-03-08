@@ -1,4 +1,4 @@
-function [Vxc,Exc,p] = int_xc(basis,P,grid,ExchFunctional,CorrFunctional)
+function [Vxc,Exc,rhoInt] = int_xc(basis,P,grid,ExchFunctional,CorrFunctional)
 % [Vxc,Exc,rhoInt] = int_xc(basis,P,grid,ExchFunctional,CorrFunctional)
 % 
 % Input:
@@ -12,28 +12,40 @@ function [Vxc,Exc,p] = int_xc(basis,P,grid,ExchFunctional,CorrFunctional)
 %   Exc             exchange-correlation energy, in hartrees
 %   rhoInt          integral of the density over the grid, should be equal to
 %                   the number of electrons
+
 M = numel(basis);
-% basisprod = zeros(length(grid.xyz), 1);
+basisval = zeros(M, length(grid.xyz));
 p = zeros(length(grid.xyz), 1);
 rhoInt = 0;
 Vxc = zeros(M, M);
+for i = 1:M
+    basisval(i,:) = eval_bf(basis(i), grid.xyz);
+end
 Exc = 0;
-for i = 1:length(grid.xyz)
+basisprod = zeros(length(grid.xyz), M, M);
+for iGrid = 1:length(grid.xyz)
     for r = 1:M
         for s = 1:M
-%             basisprod(i) = basisprod(i) + eval_bf(basis(r), grid.xyz(i,:))*eval_bf(basis(s),grid.xyz(i,:));
-            p(i) = p(i) + eval_bf(basis(r), grid.xyz(i,:))*eval_bf(basis(s),grid.xyz(i,:)) * P(r, s);
+            basisprod(iGrid, r, s) = basisval(r, iGrid)*basisval(s, iGrid);
+            p(iGrid) = p(iGrid) + basisprod(iGrid, r, s)*P(r, s);
         end
     end
-%     basisprod(i)
-    rhoInt = rhoInt + p(i)
-    [ex, Vx] = Slater(p(i));
-    [ec, Vc] = VWN(p(i), 5);
-    Exc = Exc + (ex + ec) * p(i) * grid.weights(i);
-    for mu = 1:numel(basis)
-        for nu = 1:numel(basis) 
-            Vxc(mu, nu) = Vxc(mu, nu) + eval_bf(basis(mu), grid.xyz(i,:)) * (Vx+Vc) ...
-                * eval_bf(basis(nu), grid.xyz(i,:));
+    if ExchFunctional == 'Slater'
+        [ex, Vx] = Slater(p(iGrid));
+    end
+    if CorrFunctional == 'VWN3'
+        [ec, Vc] = VWN(p(iGrid), 3);
+    elseif CorrFunctional == 'VWN5'
+        [ec, Vc] = VWN(p(iGrid), 5);
+    end
+    Vxc_ = Vx + Vc;
+    for r = 1:M
+        for s = 1:M
+            iVxc = grid.weights(iGrid)*basisprod(iGrid, r, s)*Vxc_;
+            Vxc(r, s) = Vxc(r, s) + iVxc;
         end
     end
+    exc = ex + ec;
+    Exc = Exc + grid.weights(iGrid) * exc * p(iGrid);
+    rhoInt = rhoInt + grid.weights(iGrid)*p(iGrid);
 end
