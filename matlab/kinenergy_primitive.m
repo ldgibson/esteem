@@ -15,7 +15,8 @@ I = beta*(2*b(w) + 1)*overlap_primitive(a, b, alpha, beta, A, B) ...
     - 2*beta^2*overlap_primitive(a, b + two(w, :), alpha, beta, A, B);
 
 if all(b - two(w) >= 0)
-    I = I - (1/2)*b(w)*(b(w)-1)*overlap_primitive(a, b - two(w, :), alpha, beta, A, B);
+    I = I - (1/2)*b(w)*(b(w)-1) * ...
+        overlap_primitive(a, b - two(w, :), alpha, beta, A, B);
 end    
 
 end
