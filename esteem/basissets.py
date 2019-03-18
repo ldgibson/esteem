@@ -18,12 +18,12 @@ class BasisFunctionPrimitive:
 
     def __str__(self):
         desc = "Atom: {}\n".format(self.atom) +\
-                "Atom index: {}\n".format(self.atom_id) +\
-                "A: {}\n".format(self.A) +\
-                "a: {}\n".format(self.a) +\
-                "alpha: {}\n".format(self.alpha) +\
-                "d: {}\n".format(self.d) +\
-                "N: {}\n".format(self.N)
+            "Atom index: {}\n".format(self.atom_id) +\
+            "A: {}\n".format(self.A) +\
+            "a: {}\n".format(self.a) +\
+            "alpha: {}\n".format(self.alpha) +\
+            "d: {}\n".format(self.d) +\
+            "N: {}\n".format(self.N)
         return desc
 
 
@@ -60,16 +60,6 @@ class BasisFunction(BasisFunctionPrimitive):
     def __repr__(self):
         return "Basis function of {} primitives, ".format(self.n_primitives) + \
             "atom: {}, atom index: {}".format(self.atom, self.atom_id)
-
-    def __str__(self):
-        desc = "Atom: {}\n".format(self.atom) +\
-                "Atom index: {}\n".format(self.atom_id) +\
-                "A: {}\n".format(self.A) +\
-                "a: {}\n".format(self.a) +\
-                "alpha: {}\n".format(self.alpha) +\
-                "d: {}\n".format(self.d) +\
-                "N: {}\n".format(self.N)
-        return desc
 
 
 class BasisSet(list):
