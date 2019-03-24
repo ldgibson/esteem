@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.linalg import eig, eigh
+from scipy.linalg import eigh
 
 from .basissets import basisread, buildbasis
 from .hartreefock import *
@@ -110,7 +110,7 @@ class SelfConsistentField:
             converged = conv_energy < self.settings['tol_energy'] and \
                 conv_density < self.settings['tol_density']
 
-            print("i = {},\tE = {},\tE_conv = {},\tP_conv = {}".format(counter,
-                self.Etot, conv_energy, conv_density))
+            print("i = {},\tE = {},\tE_conv = {},\tP_conv = {}"
+                  .format(counter, self.Etot, conv_energy, conv_density))
             counter += 1
         return

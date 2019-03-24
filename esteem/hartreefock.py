@@ -75,7 +75,7 @@ def int_overlap(basis):
     """
     M = len(basis)
     overlap = np.zeros((M, M))
-    
+
     for i, basisfn_i in enumerate(basis):
         # Only calculate diagonal and upper off-diagonal values
         # to reduce number of iterations necessary.
@@ -106,17 +106,19 @@ def kinenergy_primitive(a, b, alpha, beta, A, B):
 def kinenergy_int1D(w, a, b, alpha, beta, A, B):
     two = np.eye(len(b), dtype=np.int) * 2
 
-    I = beta * (2 * b[w] + 1) * overlap_primitive(a, b, alpha, beta, A, B) - \
-        2 * beta ** 2 * overlap_primitive(a, b + two[w, :], alpha, beta, A, B)
+    int1D = beta * (2 * b[w] + 1) *\
+        overlap_primitive(a, b, alpha, beta, A, B) - \
+        2 * beta ** 2 *\
+        overlap_primitive(a, b + two[w, :], alpha, beta, A, B)
 
     # if np.all(b - two[w, :] >= 0):
     if b[w] >= 2:
-        I -= (1 / 2) * b[w] * (b[w] - 1) * \
+        int1D -= (1 / 2) * b[w] * (b[w] - 1) * \
             overlap_primitive(a, b - two[w, :], alpha, beta, A, B)
     else:
         pass
 
-    return I
+    return int1D
 
 
 def int_kinenergy(basis):
@@ -133,7 +135,7 @@ def int_kinenergy(basis):
     """
     M = len(basis)
     kinenergy = np.zeros((M, M))
-    
+
     for i, basisfn_i in enumerate(basis):
         # Only calculate diagonal and upper off-diagonal values
         # to reduce number of iterations necessary.
@@ -191,17 +193,17 @@ def VRR(m, a, b, alpha, beta, A, B, C):
                                   alpha, beta, A, B, C)
 
         if a[w] > 1:
-            prim_int += (a[w] - 1) / (2 * p) * (VRR(m, a - two[w, :], b,
-                                                    alpha, beta, A, B, C) \
-                - VRR(m + 1, a - two[w, :], b, alpha, beta, A, B, C))
+            prim_int += (a[w] - 1) / (2 * p) *\
+                (VRR(m, a - two[w, :], b, alpha, beta, A, B, C)
+                 - VRR(m + 1, a - two[w, :], b, alpha, beta, A, B, C))
         else:
             pass
 
         if b[w] > 0:
             prim_int += (b[w] / (2 * p)) * \
-                (VRR(m, a - one[w, :], b - one[w, :], alpha, beta, A, B, C) \
-                - VRR(m + 1, a - one[w, :], b - one[w, :],
-                      alpha, beta, A, B, C))
+                (VRR(m, a - one[w, :], b - one[w, :], alpha, beta, A, B, C)
+                 - VRR(m + 1, a - one[w, :], b - one[w, :],
+                       alpha, beta, A, B, C))
         else:
             pass
 
@@ -214,9 +216,9 @@ def VRR(m, a, b, alpha, beta, A, B, C):
                                   alpha, beta, A, B, C)
 
         if b[w] > 1:
-            prim_int += (b[w] - 1) / (2 * p) * (VRR(m, a, b - two[w, :],
-                                                    alpha, beta, A, B, C) \
-                - VRR(m + 1, a, b - two[w, :], alpha, beta, A, B, C))
+            prim_int += (b[w] - 1) / (2 * p) *\
+                (VRR(m, a, b - two[w, :], alpha, beta, A, B, C)
+                 - VRR(m + 1, a, b - two[w, :], alpha, beta, A, B, C))
         else:
             pass
     else:
@@ -322,8 +324,9 @@ def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
 
             if a >= 2:
                 t = eri_coeffs_1D(a - 2, 0, c, 0, w)
-                v = (a - 1) / (2 * p) * (np.append(t, 0).reshape(1, -1) - \
-                    q / (p + q) * np.append(0, t).reshape(1, -1))
+                v = (a - 1) / (2 * p) *\
+                    (np.append(t, 0).reshape(1, -1) -
+                     q / (p + q) * np.append(0, t).reshape(1, -1))
                 result += np.append(v, 0).reshape(1, -1)
             else:
                 pass
@@ -340,8 +343,9 @@ def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
 
             if c >= 2:
                 t = eri_coeffs_1D(a, 0, c - 2, 0, w)
-                v = (c - 1) / (2 * q) * (np.append(t, 0).reshape(1, -1) - \
-                    q / (p + q) * np.append(0, t).reshape(1, -1))
+                v = (c - 1) / (2 * q) *\
+                    (np.append(t, 0).reshape(1, -1) -
+                     q / (p + q) * np.append(0, t).reshape(1, -1))
                 result += np.append(v, 0).reshape(1, -1)
             else:
                 pass
@@ -353,7 +357,7 @@ def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
                 pass
         else:
             result = np.array([[1.0]])
-        
+
         return result
 
     Cx = eri_coeffs_1D(a[0], b[0], c[0], d[0], 0)
@@ -390,37 +394,6 @@ def int_repulsion(basis):
                                                       prim_o.alpha,
                                                       prim_k.A, prim_l.A,
                                                       prim_n.A, prim_o.A)
-
-                    # A = basisfn_mu.A
-                    # B = basisfn_nu.A
-                    # C = basisfn_kap.A
-                    # D = basisfn_lam.A
-
-                    # alpha = basisfn_mu.alpha
-                    # beta = basisfn_nu.alpha
-                    # gamma = basisfn_kap.alpha
-                    # delta = basisfn_lam.alpha
-
-                    # dNmu = basisfn_mu.d * basisfn_mu.N
-                    # dNnu = basisfn_nu.d * basisfn_nu.N
-                    # dNlam = basisfn_kap.d * basisfn_kap.N
-                    # dNsig = basisfn_lam.d * basisfn_lam.N
-
-                    # a = basisfn_mu.a
-                    # b = basisfn_nu.a
-                    # c = basisfn_kap.a
-                    # d = basisfn_lam.a
-
-                    # _ERI = 0
-                    # for k_i, k in enumerate(dNmu):
-                        # for l_i, l in enumerate(dNnu):
-                            # for n_i, n in enumerate(dNlam):
-                                # for o_i, o in enumerate(dNsig):
-                                    # _ERI += k * l * n * o * \
-                                        # eri_primitive(A, B, C, D,
-                                                      # alpha[k_i], beta[l_i],
-                                                      # gamma[n_i], delta[o_i],
-                                                      # a, b, c, d)
                     ERI[mu, nu, kap, lam] = _ERI
                     ERI[nu, mu, kap, lam] = _ERI
                     ERI[mu, nu, lam, kap] = _ERI

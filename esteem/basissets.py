@@ -58,13 +58,13 @@ class BasisFunction(BasisFunctionPrimitive):
         return len(self.alpha)
 
     def __repr__(self):
-        return "Basis function of {} primitives, ".format(self.n_primitives) + \
+        return "Basis function of {} primitives, ".format(self.n_primitives) +\
             "atom: {}, atom index: {}".format(self.atom, self.atom_id)
 
 
 class BasisSet(list):
     """Container of all basis functions for each atom.
-    
+
     Parameters
     ----------
     atoms : list of int
@@ -151,7 +151,7 @@ def basisread(basis_set_string):
                            '6-311G': [3, 4],
                            'cc-pVDZ': [5, 9]}
 
-    if not basis_set_string in basis_func_num_dict.keys():
+    if basis_set_string not in basis_func_num_dict.keys():
         raise Exception("Basis set not recognized.\n"
                         "Please choose from the following options:\n"
                         "\tSTO-3G, 6-31G, 6-311G, cc-pVDZ")
@@ -160,7 +160,8 @@ def basisread(basis_set_string):
 
     num_basis_func_arr = basis_func_num_dict[basis_set_string]
     basissetdef = BasisSetDefinition()
-    basis_set_file_name = os.path.join('basissets',
+    path_to_files = os.path.dirname(os.path.realpath(__file__))
+    basis_set_file_name = os.path.join(path_to_files, 'basissets',
                                        basis_set_string + '.basis')
     with open(basis_set_file_name, 'r') as infile:
         atomic_number = 1
@@ -184,7 +185,7 @@ def basisread(basis_set_string):
                     num_basis_func = num_basis_func_arr[0]
                 else:
                     num_basis_func = num_basis_func_arr[1]
-                
+
                 # List containing all of the primitive definitions.
                 all_atom_defs = []
                 # Repeat for number of basis functions.
@@ -194,7 +195,7 @@ def basisread(basis_set_string):
                     info = info.split()
                     shell_type = info[0]
                     num_primitives = int(info[1])
-                    prefactor = info[2]
+                    # prefactor = info[2]
 
                     exponents = np.zeros(num_primitives)
                     if shell_type == 'SP':

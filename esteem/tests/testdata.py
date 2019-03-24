@@ -115,3 +115,6 @@ def buildtestdata():
         test.results.convert(t[13][0, 0])
         mat['testdata'].append(test)
     return mat
+
+
+MAT = buildtestdata()
