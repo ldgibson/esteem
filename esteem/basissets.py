@@ -160,7 +160,7 @@ def basisread(basis_set_string):
 
     num_basis_func_arr = basis_func_num_dict[basis_set_string]
     basissetdef = BasisSetDefinition()
-    basis_set_file_name = os.path.join('basissetfiles',
+    basis_set_file_name = os.path.join('basissets',
                                        basis_set_string + '.basis')
     with open(basis_set_file_name, 'r') as infile:
         atomic_number = 1

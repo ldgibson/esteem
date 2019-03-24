@@ -2,7 +2,7 @@ import numpy as np
 from scipy.misc import comb, factorial2
 from scipy.signal import convolve2d
 
-from utils import boys_function
+from .utils import boys_function
 
 
 def overlap_primitive(a, b, alpha, beta, A, B):

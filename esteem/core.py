@@ -1,8 +1,8 @@
 import numpy as np
 from scipy.linalg import eig, eigh
 
-from basissets import basisread, buildbasis
-from hartreefock import *
+from .basissets import basisread, buildbasis
+from .hartreefock import *
 
 
 class SelfConsistentField:
