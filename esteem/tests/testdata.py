@@ -72,8 +72,8 @@ class TestResults:
         for bf in basisarray:
             basis_func = BasisFunction()
             basis_func.atom = int(bf[0][0, 0])
-            basis_func.A = bf[1].reshape(3)
-            basis_func.a = bf[2].reshape(3)
+            basis_func.A = np.array(bf[1]).reshape(3)
+            basis_func.a = np.array(bf[2]).reshape(3)
             basis_func.alpha = bf[3].flatten()
             basis_func.d = bf[4].flatten()
             basis_func.N = bf[5].flatten()

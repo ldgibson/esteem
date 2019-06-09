@@ -1,7 +1,7 @@
 import os
 
 import numpy as np
-from scipy.misc import factorial2
+from scipy.special import factorial2
 
 
 class BasisFunctionPrimitive:

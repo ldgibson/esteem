@@ -1,6 +1,7 @@
 import numpy as np
-from scipy.misc import comb, factorial2
+# from scipy.misc import comb
 from scipy.signal import convolve2d
+from scipy.special import comb, factorial2
 
 from .utils import boys_function
 
@@ -18,22 +19,29 @@ def overlap_primitive(a, b, alpha, beta, A, B):
     -------
     Sp : float"""
 
-    if isinstance(a, np.ndarray):
-        pass
-    else:
-        a = np.array(a)
-    if isinstance(b, np.ndarray):
-        pass
-    else:
-        b = np.array(b)
-    if isinstance(A, np.ndarray):
-        pass
-    else:
-        A = np.array(A)
-    if isinstance(B, np.ndarray):
-        pass
-    else:
-        B = np.array(B)
+    # if isinstance(a, np.ndarray) and not isinstance(a, np.matrix):
+        # pass
+    # else:
+        # a = np.array(a)
+    # if isinstance(b, np.ndarray) and not isinstance(a, np.matrix):
+        # pass
+    # else:
+        # b = np.array(b)
+    # if isinstance(A, np.ndarray) and not isinstance(a, np.matrix):
+        # print(type(A))
+        # pass
+    # else:
+        # A = np.array(A)
+    # if isinstance(B, np.ndarray) and not isinstance(a, np.matrix):
+        # print(type(B))
+        # pass
+    # else:
+        # B = np.array(B)
+
+    a = np.array(a).reshape(3)
+    b = np.array(b).reshape(3)
+    A = np.array(A).reshape(3)
+    B = np.array(B).reshape(3)
 
     p = alpha + beta
     K_AB = np.exp(-alpha * beta / p * np.linalg.norm(A - B) ** 2)

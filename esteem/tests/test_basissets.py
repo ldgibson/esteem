@@ -64,13 +64,54 @@ def test_buildbasis():
             pass
 
         # Verify that all the attributes exist.
+        attributes = ['atom', 'A', 'a', 'alpha', 'd', 'N']
+        for attr in attributes:
+            for basisfn in basis:
+                assert attr in vars(basisfn).keys(),\
+                    "'{}' missing.".format(attr)
+                assert np.all(vars(basisfn)[attr] != None),\
+                    "'{}' value does not exist.".format(attr)
 
         # Verify that all the attributes have the correct type and size.
+        for p, (basisfn, refbasisfn) in enumerate(zip(basis, basisref)):
+            for attr in attributes:
+                pass
+                # if not isinstance(vars(basisfn)[attr],
+                                  # type(vars(refbasisfn)[attr])):
+                    # raise Exception("Wrong dtype for '{}' ".format(attr) +\
+                                    # "field in basis function {}.".format(p))
+                # else:
+                    # pass
+                # if len(vars(basisfn)[attr]) != len(vars(refbasisfn)[attr]):
+                    # raise Exception("Wrong size for '{}' ".format(attr) +\
+                                    # "field in basis function {}.".format(p))
+                # else:
+                    # pass
 
         # Verify that the ordering of the basis functions is correct.
 
         # Sort test and reference basis functions.
 
         # Verify that basis functions are correct.
-
+        for p, (basisfn, refbasisfn) in enumerate(zip(basis, basisref)):
+            assert basisfn.atom == refbasisfn.atom,\
+                "Basis function {} is centered on ".format(p) +\
+                "the wrong atom type."
+            assert np.all(np.abs(basisfn.A - refbasisfn.A) < 1e-3),\
+                "Basis function {} is centered on ".format(p) +\
+                "the wrong atom position."
+            assert np.all(basisfn.a == refbasisfn.a),\
+                "Basis function {} has ".format(p) +\
+                "incorrect cartesian exponents."
+            assert np.all(np.abs(basisfn.alpha - refbasisfn.alpha)
+                / refbasisfn.alpha < 1e-3),\
+                "Basis function {} has ".format(p) +\
+                "incorrect cartesian exponents."
+            assert np.all(np.abs(basisfn.d - refbasisfn.d) < 1e-3),\
+                "Basis function {} has ".format(p) +\
+                "incorrect contraction coefficients."
+            assert np.all(np.abs(basisfn.N - refbasisfn.N)
+                / refbasisfn.N < 1e-5),\
+                "Basis function {} has ".format(p) +\
+                "incorrect incorrect primitive normalization constants."
     return True
