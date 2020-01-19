@@ -77,9 +77,9 @@ class SelfConsistentField:
 
         while not converged:
             self.J, self.K = eerepulsion(self.ERI, self.P)
-            print(self.J)
-            print()
-            print(self.K)
+            # print(self.J)
+            # print()
+            # print(self.K)
             F = self.T + self.Vne + np.matrix(self.J) - np.matrix(self.K)
 
             eps, self.C = eigh(F, self.S)

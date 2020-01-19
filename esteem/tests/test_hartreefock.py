@@ -54,10 +54,118 @@ def test_int_overlap():
         S_err = np.max(np.abs(S - Sref))
 
         # if S_err > S_threshold:
-        print("Error: {} for test ".format(S_err) +\
+        # print("Error: {} for test ".format(S_err) +\
+              # "{} with molecule {}".format(test.testid, test.molecule))
+
+        assert S_err < S_threshold, "Error: {} for test ".format(S_err) +\
+            "{} with molecule {}".format(test.testid, test.molecule)
+    # raise Exception()
+    return 
+
+
+def test_int_kinenergy():
+    try:
+        from ..hartreefock import int_kinenergy
+    except(ImportError):
+        raise ImportError("int_kinenergy function missing.")
+    from ..basissets import basisread, buildbasis
+
+    T_threshold = 1e-7
+
+    for test in MAT['testdata']:
+        bdef = basisread(test.basisset)
+        basis = buildbasis(test.atoms, test.xyz, bdef)
+
+        T = int_kinenergy(basis)
+        Tref = test.results.T
+        T_err = np.max(np.abs(T - Tref))
+
+        # if S_err > S_threshold:
+        # print("Error: {} for test ".format(S_err) +\
+              # "{} with molecule {}".format(test.testid, test.molecule))
+
+        assert T_err < T_threshold, "Error: {} for test ".format(T_err) +\
+            "{} with molecule {}".format(test.testid, test.molecule)
+    # raise Exception()
+    return 
+
+
+def test_int_attraction():
+    try:
+        from ..hartreefock import int_attraction
+    except(ImportError):
+        raise ImportError("int_kinenergy function missing.")
+    from ..basissets import basisread, buildbasis
+    
+    Vne_threshold = 1e-7
+
+    for test in MAT['testdata']:
+        bdef = basisread(test.basisset)
+        basis = buildbasis(test.atoms, test.xyz, bdef)
+
+        Vne = int_attraction(test.atoms, test.xyz, basis)
+        Vne_ref = test.results.Vne
+        Vne_err = np.max(np.abs(Vne - Vne_ref))
+
+        # if S_err > S_threshold:
+        # print("Error: {} for test ".format(S_err) +\
+              # "{} with molecule {}".format(test.testid, test.molecule))
+
+        assert Vne_err < Vne_threshold, "Error: {} for test".format(Vne_err) +\
+            " {} with molecule {}".format(test.testid, test.molecule)
+    # raise Exception()
+    return 
+
+
+def test_int_repulsion():
+    try:
+        from ..hartreefock import int_repulsion
+    except(ImportError):
+        raise ImportError("int_repulsion function missing.")
+    from ..basissets import basisread, buildbasis
+    
+    ERI_threshold = 1e-7
+
+    for test in MAT['testdata']:
+        bdef = basisread(test.basisset)
+        basis = buildbasis(test.atoms, test.xyz, bdef)
+
+        ERI = int_repulsion(basis)
+        ERI_ref = test.results.ERI
+        ERI_err = np.max(np.abs(ERI - ERI_ref))
+
+        # if S_err > S_threshold:
+        print("Error: {} for test ".format(ERI_err) +\
               "{} with molecule {}".format(test.testid, test.molecule))
 
-        # assert S_err < S_threshold, "Error: {} for test ".format(S_err) +\
-            # "{} with molecule {}".format(test.testid, test.molecule)
+        # assert ERI_err < ERI_threshold, "Error: {} for test".format(ERI_err) +\
+            # " {} with molecule {}".format(test.testid, test.molecule)
+    raise Exception()
+    return 
+
+
+def test_eerepulsion():
+    try:
+        from ..hartreefock import eerepulsion
+    except(ImportError):
+        raise ImportError("eerepulsion function missing.")
+    from ..basissets import basisread, buildbasis
+    
+    Vee_threshold = 1e-6
+
+    for test in MAT['testdata']:
+        bdef = basisread(test.basisset)
+        basis = buildbasis(test.atoms, test.xyz, bdef)
+
+        ERI = int_repulsion(basis)
+        ERI_ref = test.results.ERI
+        ERI_err = np.max(np.abs(ERI - ERI_ref))
+
+        # if S_err > S_threshold:
+        print("Error: {} for test ".format(ERI_err) +\
+              "{} with molecule {}".format(test.testid, test.molecule))
+
+        # assert ERI_err < ERI_threshold, "Error: {} for test".format(ERI_err) +\
+            # " {} with molecule {}".format(test.testid, test.molecule)
     raise Exception()
     return 

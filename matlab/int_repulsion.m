@@ -26,7 +26,6 @@ for mu = 1:nBasis
   for nu = 1:mu
     for kap = 1:mu
       for lam = 1:kap
-        
         % Copy needed information from basis function list, for
         % faster access
         A = basis(mu).A;

@@ -165,22 +165,28 @@ def int_kinenergy(basis):
 
 
 def VRR(m, a, b, alpha, beta, A, B, C):
-    if isinstance(a, np.ndarray):
-        pass
-    else:
-        a = np.array(a)
-    if isinstance(b, np.ndarray):
-        pass
-    else:
-        b = np.array(b)
-    if isinstance(A, np.ndarray):
-        pass
-    else:
-        A = np.array(A)
-    if isinstance(B, np.ndarray):
-        pass
-    else:
-        B = np.array(B)
+    # if isinstance(a, np.ndarray):
+        # pass
+    # else:
+        # a = np.array(a)
+    # if isinstance(b, np.ndarray):
+        # pass
+    # else:
+        # b = np.array(b)
+    # if isinstance(A, np.ndarray):
+        # pass
+    # else:
+        # A = np.array(A)
+    # if isinstance(B, np.ndarray):
+        # pass
+    # else:
+        # B = np.array(B)
+
+    a = np.array(a).reshape(3)
+    b = np.array(b).reshape(3)
+    A = np.array(A).reshape(3)
+    B = np.array(B).reshape(3)
+    C = np.array(C).reshape(3)
 
     p = alpha + beta
     P = (alpha * A + beta * B) / p
@@ -237,6 +243,10 @@ def VRR(m, a, b, alpha, beta, A, B, C):
 def int_attraction(atoms, xyz, basis):
     M = len(basis)
     Vne = np.zeros((M, M))
+    if isinstance(xyz, np.ndarray):
+        xyz = xyz.tolist()
+    else:
+        pass
 
     for i, basisfn_i in enumerate(basis):
         # Only calculate diagonal and upper off-diagonal values
@@ -260,38 +270,47 @@ def int_attraction(atoms, xyz, basis):
 
 
 def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
-    if isinstance(a, np.ndarray):
-        pass
-    else:
-        a = np.array(a)
-    if isinstance(b, np.ndarray):
-        pass
-    else:
-        b = np.array(b)
-    if isinstance(c, np.ndarray):
-        pass
-    else:
-        c = np.array(c)
-    if isinstance(d, np.ndarray):
-        pass
-    else:
-        d = np.array(d)
-    if isinstance(A, np.ndarray):
-        pass
-    else:
-        A = np.array(A)
-    if isinstance(B, np.ndarray):
-        pass
-    else:
-        B = np.array(B)
-    if isinstance(C, np.ndarray):
-        pass
-    else:
-        C = np.array(C)
-    if isinstance(D, np.ndarray):
-        pass
-    else:
-        D = np.array(D)
+    # if isinstance(a, np.ndarray):
+        # pass
+    # else:
+        # a = np.array(a)
+    # if isinstance(b, np.ndarray):
+        # pass
+    # else:
+        # b = np.array(b)
+    # if isinstance(c, np.ndarray):
+        # pass
+    # else:
+        # c = np.array(c)
+    # if isinstance(d, np.ndarray):
+        # pass
+    # else:
+        # d = np.array(d)
+    # if isinstance(A, np.ndarray):
+        # pass
+    # else:
+        # A = np.array(A)
+    # if isinstance(B, np.ndarray):
+        # pass
+    # else:
+        # B = np.array(B)
+    # if isinstance(C, np.ndarray):
+        # pass
+    # else:
+        # C = np.array(C)
+    # if isinstance(D, np.ndarray):
+        # pass
+    # else:
+        # D = np.array(D)
+
+    a = np.array(a).reshape(3)
+    b = np.array(b).reshape(3)
+    c = np.array(c).reshape(3)
+    d = np.array(d).reshape(3)
+    A = np.array(A).reshape(3)
+    B = np.array(B).reshape(3)
+    C = np.array(C).reshape(3)
+    D = np.array(D).reshape(3)
 
     p = alpha + beta
     q = gamma + delta
@@ -306,8 +325,8 @@ def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
     # Precalculate [00|00]^(m) auxiliary integrals.
     T = p * q / (p + q) * np.linalg.norm(P - Q) ** 2
     m = np.arange(0, np.sum(a) + np.sum(b) + np.sum(c) + np.sum(d) + 1)
-    K_AB = np.exp(-alpha * beta / p * np.linalg.norm(A - B) ** 2)
-    K_CD = np.exp(-gamma * delta / q * np.linalg.norm(C - D) ** 2)
+    K_AB = np.exp(-alpha * beta / p * np.sum(AB ** 2))
+    K_CD = np.exp(-gamma * delta / q * np.sum(CD ** 2))
     ssss_m = 2 * np.pi ** (5 / 2) / (p * q * np.sqrt(p + q)) \
         * K_AB * K_CD * boys_function(m, T)
 

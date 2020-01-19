@@ -64,7 +64,9 @@ Vnn = nucnucrepulsion(atoms, xyz_a0);
 % attraction energies (instead of using sum of atomic densities)
 F = out.T + out.Vne;
 [C, eps] = eig(F, out.S);
+
 [out.epsilon, idx] = sort(diag(eps));
+
 out.C = C(:, idx);
 % Normalize coefficients if not normalized
 for i = 1:M
@@ -94,9 +96,12 @@ convDensity = 1;
 counter = 1;
 converged = convEnergy < settings.tolEnergy ...
     && convDensity < settings.tolDensity;
+
 while ~converged
     % Build Fock matrix
     [out.J, out.K] = eerepulsion(out.ERI, out.P);
+    disp(out.J)
+    disp(out.K)
     if strcmp(settings.method, 'RHF')
         F = out.T + out.Vne + (out.J - out.K);
     elseif strcmp(settings.method, 'RKS')
@@ -139,8 +144,8 @@ while ~converged
         && convDensity < settings.tolDensity;
     
     % Print the progress
-%     fprintf('i = %d\tE = %13.10f  E_conv = %13.10f  P_conv = %13.10f\n',...
-%         counter, prevEnergy, convEnergy, convDensity);
+    fprintf('i = %d\tE = %13.10f  E_conv = %13.10f  P_conv = %13.10f\n',...
+        counter, prevEnergy, convEnergy, convDensity);
     counter = counter + 1;
 end
 

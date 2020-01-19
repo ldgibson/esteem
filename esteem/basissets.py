@@ -76,7 +76,12 @@ class BasisSet(list):
     def __init__(self, atoms, xyz):
         super().__init__()
         self.atoms = atoms
-        self.xyz = xyz
+        if isinstance(xyz, list):
+            self.xyz = xyz.copy()
+        elif isinstance(xyz, np.ndarray):
+            self.xyz = xyz.tolist()
+        else:
+            self.xyz = list(xyz)
         return
 
     def extract_basis_functions(self, definition):
@@ -102,7 +107,7 @@ class BasisSet(list):
                         basisfunction = BasisFunction()
                         basisfunction.atom = atom
                         basisfunction.atom_id = i
-                        basisfunction.A = xyz
+                        basisfunction.A = xyz.copy()
                         basisfunction.a = cartesian_exponents
                         if basis_def.shelltype == 'SP':
                             if shell == 'S':
