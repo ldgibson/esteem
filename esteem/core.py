@@ -77,28 +77,25 @@ class SelfConsistentField:
 
         while not converged:
             self.J, self.K = eerepulsion(self.ERI, self.P)
-            # print(self.J)
-            # print()
-            # print(self.K)
-            F = self.T + self.Vne + np.matrix(self.J) - np.matrix(self.K)
-
+            self.Vee = np.matrix(self.J) - np.matrix(self.K)
+            F = self.T + self.Vne + self.Vee  #np.matrix(self.J) - np.matrix(self.K)
             eps, self.C = eigh(F, self.S)
             eps = np.array([np.real(x) for x in eps if np.isreal(x)])
             self.epsilon = np.sort(eps.reshape(1, -1), axis=1)
             idx = eps.reshape(1, -1).argsort(axis=1)
-            self.C = np.matrix(C[:, idx])
+            self.C = np.matrix(self.C[:, idx])
 
             for i in range(self.M):
                 C_N = self.C[:, i].H * np.matrix(self.S) * self.C[:, i]
                 C_N = C_N[0, 0]
-                if C_N != 1.0:
+                if np.abs(C_N - 1.0) > 1e-4:
                     self.C[:, i] /= np.sqrt(C_N)
                 else:
                     pass
 
             self.P = 2 * self.C[:, :N // 2] * self.C[:, :N // 2].H
 
-            A = self.T + self.Vne + 0.5 * (self.J - self.K)
+            A = self.T + self.Vne + 0.5 * self.Vee  # (self.J - self.K)
             self.E0 = np.trace(self.P * A)
             # self.E0 = np.trace(np.matmul(self.P, A))
             self.Etot = self.E0 + self.Vnn
