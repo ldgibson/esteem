@@ -269,39 +269,77 @@ def int_attraction(atoms, xyz, basis):
     return Vne
 
 
+def eri_coeffs_1D(a, b, c, d, w, p, q, AB, CD, PA, WP, QC, WQ):
+    if b >= 1:
+        # HRR-b: Transfers angular momentum from b to a
+        # -----------------------------------------------------------------
+        # [a,b|c,d]^(m) = [a+1,b-1|c,d]^(m) + AB(i)*[a,b-1|c,d]^(m)
+        t1 = eri_coeffs_1D(a + 1, b - 1, c, d, w, p, q, AB, CD, PA, WP, QC, WQ)
+        t2 = eri_coeffs_1D(a, b - 1, c, d, w, p, q, AB, CD, PA, WP, QC, WQ)
+        result = t1 + AB[w] * np.append(t2, 0).reshape(1, -1)
+    elif d >= 1:
+        # HRR-d: Transfers angular momentum from d to c
+        # -----------------------------------------------------------------
+        # [a,b|c,d]^(m) = [a,b|c+1,d-1]^(m) + CD(i)*[a,b|c,d-1]^(m)
+        t1 = eri_coeffs_1D(a, b, c + 1, d - 1, w, p, q, AB, CD, PA, WP, QC, WQ)
+        t2 = eri_coeffs_1D(a, b, c, d - 1, w, p, q, AB, CD, PA, WP, QC, WQ)
+        result = t1 + CD[w] * np.append(t2, 0).reshape(1, -1)
+    elif a >= 1:
+        # VRR-a: Reduces angular momentum a
+        # -----------------------------------------------------------------
+        # [a,0|c,0]^(m) = PA(i)*[a-1,0|c,0]^(m) + WP(i)*[a-1,0|c,0]^(m+1)
+        #        + (a-1)/(2p)([a-2,0|c,0]^(m) - q/(p+q)*[a-2,0|c,0]^(m+1)])
+        #        + c/2/(p+q)*[a-1,0|c-1,0]^(m+1)
+        t = eri_coeffs_1D(a - 1, 0, c, 0, w, p, q, AB, CD, PA, WP, QC, WQ)
+        result = PA[w] * np.append(t, 0).reshape(1, -1) + \
+            WP[w] * np.append(0, t).reshape(1, -1)
+
+        if a >= 2:
+            t = eri_coeffs_1D(a - 2, 0, c, 0, w, p, q, AB, CD, PA, WP, QC, WQ)
+            v = (a - 1) / (2 * p) * (np.append(t, 0).reshape(1, -1) -
+                 q / (p + q) * np.append(0, t).reshape(1, -1))
+            result += np.append(v, 0).reshape(1, -1)
+        else:
+            pass
+        if c >= 1:
+            t = eri_coeffs_1D(a - 1, 0, c - 1, 0, w, p, q, AB, CD, PA, WP, QC, WQ)
+            v = c / 2 / (p + q) * np.append(0, t).reshape(1, -1)
+            result += np.append(v, 0).reshape(1, -1)
+        else:
+            pass
+    elif c >= 1:
+        # VRR-c: Reduces angular momentum c
+        # -----------------------------------------------------------------
+        # [a,0|c,0]^(m) = QC(x)*[a,0|c-1,0]^(m) + WQ(x)*[a,0|c-1,0]^(m+1)
+        #       + (c-1)/(2q)([a,0|c-2,0]^(m) - p/(p+q)*[a,0|c-2,0]^(m+1)])
+        #       + a/2/(p+q)*[a-1,0|c-1,0]^(m+1)
+        t = eri_coeffs_1D(a, 0, c - 1, 0, w, p, q, AB, CD, PA, WP, QC, WQ)
+        result = QC[w] * np.append(t, 0).reshape(1, -1) + \
+            WQ[w] * np.append(0, t).reshape(1, -1)
+
+        if c >= 2:
+            t = eri_coeffs_1D(a, 0, c - 2, 0, w, p, q, AB, CD, PA, WP, QC, WQ)
+            v = (c - 1) / (2 * q) * (np.append(t, 0).reshape(1, -1) -
+                 p / (p + q) * np.append(0, t).reshape(1, -1))
+            result += np.append(v, 0).reshape(1, -1)
+        else:
+            pass
+        if a >= 1:
+            t = eri_coeffs_1D(a - 1, 0, c - 1, 0, w, p, q, AB, CD, PA, WP, QC, WQ)
+            v = a / 2 / (p + q) * np.append(0, t).reshape(1, -1)
+            result += np.append(v, 0).reshape(1, -1)
+        else:
+            pass
+    else:
+        # [0,0|0,0]^(m)
+        # -----------------------------------------------------------------
+        # (m-dependent prefactors are included outside of recursion)
+        result = np.array([[1.0]])
+
+    return result
+
+
 def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
-    # if isinstance(a, np.ndarray):
-        # pass
-    # else:
-        # a = np.array(a)
-    # if isinstance(b, np.ndarray):
-        # pass
-    # else:
-        # b = np.array(b)
-    # if isinstance(c, np.ndarray):
-        # pass
-    # else:
-        # c = np.array(c)
-    # if isinstance(d, np.ndarray):
-        # pass
-    # else:
-        # d = np.array(d)
-    # if isinstance(A, np.ndarray):
-        # pass
-    # else:
-        # A = np.array(A)
-    # if isinstance(B, np.ndarray):
-        # pass
-    # else:
-        # B = np.array(B)
-    # if isinstance(C, np.ndarray):
-        # pass
-    # else:
-        # C = np.array(C)
-    # if isinstance(D, np.ndarray):
-        # pass
-    # else:
-        # D = np.array(D)
 
     a = np.array(a).reshape(3)
     b = np.array(b).reshape(3)
@@ -335,61 +373,9 @@ def eri_primitive(a, b, c, d, alpha, beta, gamma, delta, A, B, C, D):
     QC = Q - C
     WQ = W - Q
 
-    def eri_coeffs_1D(a, b, c, d, w):
-        if b >= 1:
-            t1 = eri_coeffs_1D(a + 1, b - 1, c, d, w)
-            t2 = eri_coeffs_1D(a, b - 1, c, d, w)
-            result = t1 + AB[w] * np.append(t2, 0).reshape(1, -1)
-        elif d >= 1:
-            t1 = eri_coeffs_1D(a, b, c + 1, d - 1, w)
-            t2 = eri_coeffs_1D(a, b, c, d - 1, w)
-            result = t1 + CD[w] * np.append(t2, 0).reshape(1, -1)
-        elif a >= 1:
-            t = eri_coeffs_1D(a - 1, 0, c, 0, w)
-            result = PA[w] * np.append(t, 0).reshape(1, -1) + \
-                WP[w] * np.append(0, t).reshape(1, -1)
-
-            if a >= 2:
-                t = eri_coeffs_1D(a - 2, 0, c, 0, w)
-                v = (a - 1) / (2 * p) *\
-                    (np.append(t, 0).reshape(1, -1) -
-                     q / (p + q) * np.append(0, t).reshape(1, -1))
-                result += np.append(v, 0).reshape(1, -1)
-            else:
-                pass
-            if c >= 1:
-                t = eri_coeffs_1D(a - 1, 0, c - 1, 0, w)
-                v = c / (2 * (p + q)) * np.append(0, t).reshape(1, -1)
-                result += np.append(v, 0).reshape(1, -1)
-            else:
-                pass
-        elif c >= 1:
-            t = eri_coeffs_1D(a, 0, c - 1, 0, w)
-            result = QC[w] * np.append(t, 0).reshape(1, -1) + \
-                WQ[w] * np.append(0, t).reshape(1, -1)
-
-            if c >= 2:
-                t = eri_coeffs_1D(a, 0, c - 2, 0, w)
-                v = (c - 1) / (2 * q) *\
-                    (np.append(t, 0).reshape(1, -1) -
-                     q / (p + q) * np.append(0, t).reshape(1, -1))
-                result += np.append(v, 0).reshape(1, -1)
-            else:
-                pass
-            if a >= 1:
-                t = eri_coeffs_1D(a - 1, 0, c - 1, 0, w)
-                v = a / (2 * (p + q)) * np.append(0, t).reshape(1, -1)
-                result += np.append(v, 0).reshape(1, -1)
-            else:
-                pass
-        else:
-            result = np.array([[1.0]])
-
-        return result
-
-    Cx = eri_coeffs_1D(a[0], b[0], c[0], d[0], 0)
-    Cy = eri_coeffs_1D(a[1], b[1], c[1], d[1], 1)
-    Cz = eri_coeffs_1D(a[2], b[2], c[2], d[2], 2)
+    Cx = eri_coeffs_1D(a[0], b[0], c[0], d[0], 0, p, q, AB, CD, PA, WP, QC, WQ)
+    Cy = eri_coeffs_1D(a[1], b[1], c[1], d[1], 1, p, q, AB, CD, PA, WP, QC, WQ)
+    Cz = eri_coeffs_1D(a[2], b[2], c[2], d[2], 2, p, q, AB, CD, PA, WP, QC, WQ)
     coeffs = convolve2d(convolve2d(Cx, Cy), Cz)
     integral = np.dot(coeffs.reshape(1, -1), ssss_m.reshape(-1, 1))
 
@@ -454,6 +440,8 @@ def eerepulsion(ERI, P):
             if mu != nu:
                 J[nu, mu] = _J
                 K[nu, mu] = _K
+            else:
+                pass
     return (J, K)
 
 
