@@ -150,7 +150,10 @@ class BasisSetDefinition(dict):
 
 
 def basisread(basis_set_string):
-    elements = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne']
+    elements = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne',
+                'Na', 'Mg', 'Al', 'S', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca',
+                'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu',
+                'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr']
     basis_func_num_dict = {'STO-3G': [1, 2],
                            '6-31G': [2, 3],
                            '6-311G': [3, 4],
